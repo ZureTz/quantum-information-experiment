@@ -33,3 +33,10 @@
    ```
 
 4. Now you can use `pyqpanda` to do what you want.
+
+## Edit Config files
+
+1. Copy config/config.toml.example to config/config.toml
+```bash
+cp config/config.toml.example config/config.toml
+```

@@ -31,8 +31,11 @@ def main():
     circuit = pq.QCircuit()
 
     circuit << pq.H(quBits[0])
+    print('Circuit be like: {}'.format(circuit))
 
     prog << circuit << pq.Measure(quBits[0], cBits[0])
+    print('Program be like: {}'.format(prog))
+    
 
     # Run Given Iterations
     iterations = int(args.get("ITERATIONS"))
