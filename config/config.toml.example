@@ -3,3 +3,7 @@ shots = 100000
 
 [exportFiles]
 destination = "YourDesiredPath"
+
+[adderDigits]
+iterations = 100000
+count = 4

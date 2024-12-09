@@ -1,6 +1,17 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,visualstudiocode,python
 
+### C ###
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+!Makefile
+
+# Unignore all dirs
+!*/
+
 ### macOS ###
 # General
 .DS_Store
