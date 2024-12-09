@@ -12,7 +12,7 @@ def configInformation() -> dict[str, Any]:
 config: Final[dict[str, Any]] = configInformation()
 
 
-class SubtractorProgram:
+class ControlledSubtractorProgram:
     def __init__(self, workingDigits: int):
         self.qvm = pq.CPUQVM()  # Initialize QVM
         self.qvm.init_qvm()
@@ -199,7 +199,7 @@ def main():
 
     print("nDigits = {}, runIterations = {}".format(nDigits, runIterations))
 
-    with SubtractorProgram(nDigits) as program:
+    with ControlledSubtractorProgram(nDigits) as program:
         program.run(0b0001, 0b1011, 0, runIterations)
         program.run(0b0001, 0b1011, 1, runIterations)
 
