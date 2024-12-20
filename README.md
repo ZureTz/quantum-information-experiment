@@ -32,7 +32,7 @@
    python -m pip install -r requirements.txt
    ```
 
-4. Now you can use `pyqpanda` to do what you want.
+4. Now you can use `pyqpanda` and `qiskit` to do what you want.
 
 ## Edit Config files
 

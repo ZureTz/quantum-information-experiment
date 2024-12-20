@@ -14,6 +14,12 @@ config: Final[dict[str, Any]] = configInformation()
 
 class ControlledSubtractorProgram:
     def __init__(self, workingDigits: int):
+        """
+        Initialize the ControlledSubtractorProgram with the number of working digits.
+
+        Args:
+            workingDigits (int): The number of digits to be used in the quantum operations.
+        """
         self.qvm = pq.CPUQVM()  # Initialize QVM
         self.qvm.init_qvm()
 
@@ -47,9 +53,21 @@ class ControlledSubtractorProgram:
     def prepareInputCircuit(
         self, a: int, b: int, isDoingSubtraction: int
     ) -> pq.QCircuit:
+        """
+        Prepare the input circuit by setting the initial values of qubits based on the binary representation of a and b.
+
+        Args:
+            a (int): The integer value for the first operand.
+            b (int): The integer value for the second operand.
+            isDoingSubtraction (int): Flag to indicate if the operation is subtraction (1) or addition (0).
+
+        Returns:
+            pq.QCircuit: The quantum circuit with the prepared input.
+        """
+        
         circuit = pq.QCircuit()
 
-        # convert a and b to binary form list
+        # Convert a and b to binary from right to left
         aInBinary: list[int] = [
             1 if (a % 2**i // 2 ** (i - 1)) == 1 else 0
             for i in range(self.workingDigits, 0, -1)
@@ -66,7 +84,7 @@ class ControlledSubtractorProgram:
             )
         )
 
-        # based on the two lists, set appropriate input, using the X gate
+        # Set the values of qubits based on the binary representation of a and b
         for i in range(self.workingDigits - 1, -1, -1):
             if aInBinary[i] == 1:
                 circuit << pq.X(self.qubits[self.aBeginIndex + i])
@@ -80,8 +98,16 @@ class ControlledSubtractorProgram:
 
         return circuit
 
-    # Negate input A
     def preControlledInverseCircuit(self) -> pq.QCircuit:
+        """
+        Prepare the pre-controlled inverse circuit.
+
+        This circuit applies a CNOT gate controlled by the control qubit to each qubit in the range of a.
+
+        Returns:
+            pq.QCircuit: The quantum circuit with the pre-controlled inverse operations.
+        """
+        
         circuit = pq.QCircuit()
         for i in range(self.aBeginIndex + self.workingDigits):
             circuit << pq.CNOT(self.qubits[self.controlIndex], self.qubits[i])
@@ -92,6 +118,16 @@ class ControlledSubtractorProgram:
     # bit index is invoked for the same digits qubits
     #   e.g. qubits[0 + bitIndex], qubits[4 + bitIndex] ...
     def singleAdderCircuit(self, bitIndex: int) -> pq.QCircuit:
+        """
+        Creates a single-bit adder quantum circuit.
+
+        Args:
+            bitIndex (int): The index of the bit to perform the addition on.
+        
+        Returns:
+            pq.QCircuit: A quantum circuit implementing the single-bit adder.
+        """
+        
         circuit = pq.QCircuit()
         (
             circuit
@@ -128,8 +164,17 @@ class ControlledSubtractorProgram:
 
         return circuit
 
-    # negate all outputs
     def postControlledInverseCircuit(self) -> pq.QCircuit:
+        """
+        Prepare the post-controlled inverse circuit.
+        
+        Args:
+            None
+            
+        Returns:
+            pq.QCircuit: The quantum circuit with the post-controlled inverse operations.
+        """
+        
         circuit = pq.QCircuit()
 
         for i in range(self.sumBeginIndex, self.sumBeginIndex + self.workingDigits):
@@ -138,11 +183,22 @@ class ControlledSubtractorProgram:
         circuit << pq.BARRIER(self.qubits)
         return circuit
 
-        # A and B are for digits binary number
 
     def combinationCircuit(
         self, a: int, b: int, isDoingSubtraction: int
     ) -> pq.QCircuit:
+        """
+        Combine the quantum circuits for the pre-controlled inverse, single adder, and post-controlled inverse operations.
+
+        Args:
+            a (int): The integer value for the first operand.
+            b (int): The integer value for the second operand.
+            isDoingSubtraction (int): Flag to indicate if the operation is subtraction (1) or addition (0).
+
+        Returns:
+            pq.QCircuit: The quantum circuit with the combined operations.
+        """
+        
         circuit = pq.QCircuit()
 
         # Prepare input
@@ -160,6 +216,19 @@ class ControlledSubtractorProgram:
         return circuit
 
     def run(self, a: int, b: int, isDoingSubtraction: int, iterations: int):
+        """
+        Run the quantum program with the given inputs.
+        
+        Args:
+            a (int): The integer value for the first operand.
+            b (int): The integer value for the second operand.
+            isDoingSubtraction (int): Flag to indicate if the operation is subtraction (1) or addition (0).
+            iterations (int): The number of iterations to run the program.
+        
+        Returns:   
+            None
+        """
+        
         circuit = self.combinationCircuit(a, b, isDoingSubtraction)
 
         prog = pq.QProg()
@@ -187,18 +256,37 @@ class ControlledSubtractorProgram:
 
     # Destructor using 'with'
     def __enter__(self):
+        """
+        Enter the context manager.
+
+        Returns:
+            self
+        """
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        """
+        Exit the context manager.
+        
+        Returns:
+            None
+        """
+        
         self.qvm.finalize()
 
 
 def main():
+    # Load configuration
+    
+    # Number of digits to be used in the quantum operations
     nDigits: int = config["adderDigits"]["count"]
+    # Number of iterations to run the program
     runIterations: int = config["adderDigits"]["iterations"]
 
     print("nDigits = {}, runIterations = {}".format(nDigits, runIterations))
 
+    # Run the program for addition and subtraction respectively
+    # Using different values for a and b to ensure the correctness of the program
     with ControlledSubtractorProgram(nDigits) as program:
         program.run(0b0001, 0b1011, 0, runIterations)
         program.run(0b0001, 0b1011, 1, runIterations)

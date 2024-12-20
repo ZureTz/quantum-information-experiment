@@ -1,16 +1,18 @@
 {
   "cSpell.words": [
     "cbits",
-    "CNOT",
     "cin",
+    "CNOT",
     "cout",
     "CPUQVM",
     "Obeserved",
     "pyqpanda",
+    "qiskit",
     "qprog",
     "Qubit",
     "qubits",
     "Subtractor",
-    "Toffoli"
+    "Toffoli",
+    "venv"
   ]
 }
