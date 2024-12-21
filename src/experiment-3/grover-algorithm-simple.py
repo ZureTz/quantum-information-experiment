@@ -1,9 +1,8 @@
 from typing import Final, Any
 import tomllib
 
-from qiskit.visualization import plot_histogram
-from qiskit_aer import AerSimulator
 import qiskit as qk
+from qiskit.quantum_info import Statevector
 
 
 def configInformation() -> dict[str, Any]:
@@ -44,10 +43,34 @@ def oracleCircuit(n: int = 2) -> qk.QuantumCircuit:
     return oracle
 
 
+def groverCircuit(n: int = 2) -> qk.QuantumCircuit:
+    """
+    Function that returns a Grover's algorithm circuit
+
+    Args:
+        n (int): Number of input qubits (default 2) in the Grover's algorithm
+
+    Returns:
+        qk.QuantumCircuit: Grover's algorithm circuit
+    """
+
+    # Create a quantum circuit with n qubits
+    grover = qk.QuantumCircuit(n, n, name="Grover")
+    grover.h(range(n))
+    grover.append(oracleCircuit(n), range(n))
+
+    return grover
+
+
 def main():
-    # Create oracle circuit (default 2 qubits) and draw it
-    circuit = oracleCircuit()
-    circuit.draw(output="mpl", filename=fileSavePath + "oracle.png")
+    # Prepare and run the Grover's algorithm
+    grover = groverCircuit()
+    grover.draw(output="mpl", filename=fileSavePath + "grover-simple.png")
+
+    grover.remove_final_measurements()
+    stateVector = Statevector(grover)
+
+    print(stateVector)
 
 
 if __name__ == "__main__":
