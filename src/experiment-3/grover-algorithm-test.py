@@ -1,3 +1,5 @@
+# Relative path: src/experiment-3/grover-algorithm-test.py
+
 from math import sqrt
 from typing import Final, Any
 import tomllib
@@ -167,9 +169,9 @@ def diffusionCircuit() -> qk.QuantumCircuit:
     # Then apply X gate to all input qubits
     diffusion.x(range(numInputQuBits))
     # Apply the multi-controlled Z gate
-    cczGate = MCMT("cx", numInputQuBits, 1)
+    cccxGate = MCMT("cx", numInputQuBits, 1)
     diffusion.compose(
-        cczGate,
+        cccxGate,
         list(range(numInputQuBits))
         + [numInputQuBits + numAdditionalQuBits + numOracleQuBits - 1],
         inplace=True,

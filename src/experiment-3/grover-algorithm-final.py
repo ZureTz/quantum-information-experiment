@@ -1,3 +1,5 @@
+# Relative path: src/experiment-3/grover-algorithm-final.py
+
 from math import sqrt
 from typing import Final, Any
 import tomllib
@@ -109,9 +111,9 @@ def diffusionCircuit() -> qk.QuantumCircuit:
     # Then apply X gate to all input qubits
     diffusion.x(range(numInputQuBits))
     # Apply the multi-controlled Z gate
-    cczGate = MCMT("cx", numInputQuBits, 1)
+    cccxGate = MCMT("cx", numInputQuBits, 1)
     diffusion.compose(
-        cczGate,
+        cccxGate,
         list(range(numInputQuBits)) + [numInputQuBits + numOracleQuBits - 1],
         inplace=True,
     )
@@ -143,10 +145,12 @@ def main():
     for _ in range(int(sqrt(2 ** (numInputQuBits)))):
         circuit.compose(oracleCircuit(), inplace=True)
         circuit.compose(diffusionCircuit(), inplace=True)
-        
+
     # Get the state vector of the circuit and output as png
     stateVector = Statevector(circuit)
-    stateVector.draw(output="city", filename=fileSavePath + "grover-algorithm-state-vector.png")
+    stateVector.draw(
+        output="city", filename=fileSavePath + "grover-algorithm-state-vector.png"
+    )
 
     # Measure all qubits except the last one which is in the oracle workspace
     circuit.measure(range(numInputQuBits), range(numInputQuBits))
